@@ -22,6 +22,11 @@ def main():
     transform = T.Compose([T.Resize((432, 768)), T.ToTensor(), norm])
 
     for view_dir in os.listdir(image_dir):
+        # TODO: Filter out lidar or radar directory!
+        if 'CAM' not in view_dir:
+            continue
+        else:
+            print(f'Processing {view_dir}...')
         for image_name in tqdm(os.listdir(osp.join(image_dir, view_dir))):
 
             image_path = osp.join(image_dir, view_dir, image_name)

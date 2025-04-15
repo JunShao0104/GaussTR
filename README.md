@@ -29,7 +29,22 @@ We recommend cloning the repository using the `--single-branch` option to avoid 
 ```bash
 git clone https://github.com/hustvl/GaussTR.git --single-branch
 cd GaussTR
+conda create -n gausstr python=3.10
 pip install -r requirements.txt
+pip uninstall mmcv==2.2.0
+pip install mmcv==2.1.0
+
+# To install mmdet3d development version in order to generate the pkl files and gt database:
+# pip uninstall mmdet3d
+# wget https://github.com/open-mmlab/mmdetection3d/archive/refs/tags/v1.4.0.zip
+# unzip v1.4.0.zip
+# cd mmdetection3d-1.4.0
+# pip install -v -e .
+
+# For RuntimeError: Failed to find function: mono.model.backbones.vit_large_reg
+# https://github.com/YvanYin/Metric3D/issues/151
+# Navigate to /home/lzhao360/.cache/torch/hub/yvanyin_metric3d_main/mono/utils/comm.py and add the following line:
+from mono.model.backbones import *
 ```
 
 ### Dataset Preparation

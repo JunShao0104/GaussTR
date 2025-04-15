@@ -28,6 +28,7 @@ class LN2d(nn.Module):
 
 
 def get_scaling_modules(scale, channels, norm_cfg):
+    # Only working for python 3.10
     assert -2 <= scale <= 1
     match scale:
         case -2:
@@ -41,6 +42,22 @@ def get_scaling_modules(scale, channels, norm_cfg):
             return nn.Identity()
         case 1:
             return nn.MaxPool2d(kernel_size=2, stride=2)
+    
+    # # Works for all python versions
+    # assert -2 <= scale <= 1
+    # if scale == -2:
+    #     return nn.Sequential(
+    #         nn.ConvTranspose2d(channels, channels // 2, 2, 2),
+    #         build_norm_layer(norm_cfg, channels // 2)[1],
+    #         nn.GELU(),
+    #         nn.ConvTranspose2d(channels // 2, channels // 4, 2, 2)
+    #     )
+    # elif scale == -1:
+    #     return nn.ConvTranspose2d(channels, channels // 2, 2, 2)
+    # elif scale == 0:
+    #     return nn.Identity()
+    # elif scale == 1:
+    #     return nn.MaxPool2d(kernel_size=2, stride=2)
 
 
 @MODELS.register_module()

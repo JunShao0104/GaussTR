@@ -8,3 +8,4 @@ mmsegmentation
 openmim
 ninja
 gsplat
+timm

@@ -13,6 +13,11 @@ from PIL import Image
 from mmdet3d.datasets.transforms import LoadMultiViewImageFromFiles
 from mmdet3d.registry import TRANSFORMS
 
+# For the error: OSError: image file is truncated (18 bytes not processed)
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
+
+
 
 @TRANSFORMS.register_module()
 class BEVLoadMultiViewImageFromFiles(LoadMultiViewImageFromFiles):

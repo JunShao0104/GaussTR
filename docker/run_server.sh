@@ -19,7 +19,7 @@ docker run -it \
     -v /nethome/lzhao360:$HOME \
     -v /mnt:/mnt \
     -v /scratch:/scratch \
-    --name lingjunz_gausstr \
+    --name lingjunz_gausstr_2 \
     --gpus=all \
     --ipc=host \
     gausstr:latest # Your image name: can directly used the existing image

@@ -27,7 +27,10 @@
 We recommend cloning the repository using the `--single-branch` option to avoid downloading unnecessary large media files for the project website from other branches:
 
 ```bash
-git clone https://github.com/hustvl/GaussTR.git --single-branch
+git clone git@github.com:JunShao0104/GaussTR.git
+# Create your own branch and switch to it
+git checkout -b your_branch_name
+git push -u origin your_branch_name
 cd GaussTR
 conda create -n gausstr python=3.10
 
@@ -63,6 +66,12 @@ from mono.model.backbones import *
 pip uninstall mmcv mmcv-full
 # Replace the cu118 and torch2.1 with your own CUDA and PyTorch version
 pip install mmcv==2.1.0 -f https://download.openmmlab.com/mmcv/dist/cu118/torch2.1/index.html
+
+# 3. For FileNotFoundError: [Errno 2] No such file or directory: '/scratch/lzhao360/download/miniconda3/miniconda3/envs/gausstr/lib/python3.10/site-packages/featup/featurizers/maskclip/bpe_simple_vocab_16e6.txt.gz'
+# https://github.com/mhamilton723/FeatUp/issues/47
+cd /scratch/lzhao360/download/miniconda3/miniconda3/envs/gausstr/lib/python3.10/site-packages/featup/featurizers/maskclip/
+wget https://github.com/openai/CLIP/raw/main/clip/bpe_simple_vocab_16e6.txt.gz -O bpe_simple_vocab_16e6.txt.gz
+gzip -t bpe_simple_vocab_16e6.txt.gz # For checking if the file is valid
 ```
 
 ### Dataset Preparation

@@ -11,6 +11,10 @@ except:
 from torch.utils.data import DataLoader
 from rich.progress import track
 
+# For the error: OSError: image file is truncated (18 bytes not processed)
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
+
 from gausstr import *
 
 

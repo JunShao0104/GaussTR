@@ -10,12 +10,16 @@ from featup.util import norm
 from PIL import Image
 from tqdm import tqdm
 
+# For the error: OSError: image file is truncated (18 bytes not processed)
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
+
 image_dir = 'data/nuscenes/samples/'
 save_dir = 'data/nuscenes_featup/'
 
 
 def main():
-    device = torch.device('cuda')
+    device = torch.device('cuda:1') # TODO: Change to your specified gpu!
     upsampler = torch.hub.load(
         'mhamilton723/FeatUp', 'maskclip', use_norm=False).to(device)
     upsampler.eval()

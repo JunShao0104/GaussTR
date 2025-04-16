@@ -9,3 +9,5 @@ openmim
 ninja
 gsplat
 timm
+ftfy
+regex

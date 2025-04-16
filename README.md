@@ -52,10 +52,17 @@ pip install -r requirements_cuda118.txt --extra-index-url https://download.pytor
 # python tools/create_data.py nuscenes --root-path ./data/nuscenes --out-dir ./data/nuscenes --extra-tag nuscenes # train and val pkl files, db infos pkl file, gt_database
 # python tools/create_data.py nuscenes --root-path ./data/nuscenes --out-dir ./data/nuscenes --extra-tag nuscenes --only-gt-database # only gt_database
 
-# For RuntimeError: Failed to find function: mono.model.backbones.vit_large_reg
+# Error list and solutions:
+# 1. For RuntimeError: Failed to find function: mono.model.backbones.vit_large_reg
 # https://github.com/YvanYin/Metric3D/issues/151
 # Navigate to /home/lzhao360/.cache/torch/hub/yvanyin_metric3d_main/mono/utils/comm.py and add the following line:
 from mono.model.backbones import *
+
+# 2. For ModuleNotFoundError: No module named 'mmcv._ext'
+# https://mmcv.readthedocs.io/en/latest/get_started/installation.html
+pip uninstall mmcv mmcv-full
+# Replace the cu118 and torch2.1 with your own CUDA and PyTorch version
+pip install mmcv==2.1.0 -f https://download.openmmlab.com/mmcv/dist/cu118/torch2.1/index.html
 ```
 
 ### Dataset Preparation

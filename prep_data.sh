@@ -4,8 +4,12 @@
 # DATA="/storage/coda1/p-lgan31/0/shared/dataset"
 
 # for lnar-server
-DATA="/scratch/LNAR/dataset"
-DATA_OCC3D="/scratch/LNAR/dataset/Occ3d"
+# DATA="/scratch/LNAR/dataset"
+# DATA_OCC3D="/scratch/LNAR/dataset/Occ3d"
+
+# for lnar-server-l40s
+DATA="/scratch/shared/dataset"
+DATA_OCC3D="/scratch/shared/dataset/Occ3d"
 
 # for skynet
 # DATA="/coc/flash5/datasets"

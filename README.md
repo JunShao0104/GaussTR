@@ -30,9 +30,14 @@ We recommend cloning the repository using the `--single-branch` option to avoid 
 git clone https://github.com/hustvl/GaussTR.git --single-branch
 cd GaussTR
 conda create -n gausstr python=3.10
+
+# For CUDA 12.6
 pip install -r requirements.txt
 pip uninstall mmcv==2.2.0
 pip install mmcv==2.1.0
+
+# For CUDA 11.8
+pip install -r requirements_cuda118.txt --extra-index-url https://download.pytorch.org/whl/cu118
 
 # To install mmdet3d development version in order to generate the pkl files and gt database:
 # pip uninstall mmdet3d
@@ -40,6 +45,12 @@ pip install mmcv==2.1.0
 # unzip v1.4.0.zip
 # cd mmdetection3d-1.4.0
 # pip install -v -e .
+
+# To generate the train and val pkl files:
+# Create symbolic links to the dataset: ./data/nuscenes under mmdetection3d-1.4.0
+# cd mmdetection3d-1.4.0
+# python tools/create_data.py nuscenes --root-path ./data/nuscenes --out-dir ./data/nuscenes --extra-tag nuscenes # train and val pkl files, db infos pkl file, gt_database
+# python tools/create_data.py nuscenes --root-path ./data/nuscenes --out-dir ./data/nuscenes --extra-tag nuscenes --only-gt-database # only gt_database
 
 # For RuntimeError: Failed to find function: mono.model.backbones.vit_large_reg
 # https://github.com/YvanYin/Metric3D/issues/151

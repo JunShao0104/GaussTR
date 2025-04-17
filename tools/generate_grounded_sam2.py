@@ -12,6 +12,10 @@ from sam2.build_sam import build_sam2
 from sam2.sam2_image_predictor import SAM2ImagePredictor
 from groundingdino.util.inference import load_image, load_model, predict
 
+# For the error: OSError: image file is truncated (18 bytes not processed)
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
+
 OCC3D_CATEGORIES = (
     ['barrier', 'concrete barrier', 'metal barrier', 'water barrier'],
     ['bicycle', 'bicyclist'],

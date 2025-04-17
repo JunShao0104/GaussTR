@@ -57,7 +57,25 @@ pip install -r requirements_cuda121.txt --extra-index-url https://download.pytor
 # cd mmdetection3d-1.4.0
 # python tools/create_data.py nuscenes --root-path ./data/nuscenes --out-dir ./data/nuscenes --extra-tag nuscenes # train and val pkl files, db infos pkl file, gt_database
 # python tools/create_data.py nuscenes --root-path ./data/nuscenes --out-dir ./data/nuscenes --extra-tag nuscenes --only-gt-database # only gt_database
+```
 
+### Dataset Preparation
+
+1. Prepare the nuScenes dataset following the instructions in the [mmdetection3d docs](https://mmdetection3d.readthedocs.io/en/latest/user_guides/dataset_prepare.html#nuscenes).
+2. Update the dataset `.pkl` files with `scene_idx` to match the occupancy ground truths:
+
+    ```bash
+    python tools/create_data.py nuscenes --root-path ./data/nuscenes --out-dir ./data/nuscenes --extra-tag nuscenes
+    ```
+
+3. Download the occupancy ground truth data from [CVPR2023-3D-Occupancy-Prediction](https://github.com/CVPR2023-3D-Occupancy-Prediction/CVPR2023-3D-Occupancy-Prediction) and place it in `data/nuscenes/gts`.
+4. Generate features and rendering targets:
+
+    * Run `PYTHONPATH=. python tools/generate_depth.py` to generate metric depth estimations.
+    * **[For GaussTR-FeatUp Only]** Navigate to the [FeatUp](https://github.com/mhamilton723/FeatUp) repository and run `python tools/generate_featup.py`.
+    * **[Optional for GaussTR-FeatUp]** Navigate to the [Grounded SAM 2](https://github.com/IDEA-Research/Grounded-SAM-2) and run `python tools/generate_grounded_sam2.py` to enable auxiliary segmentation supervision.
+
+```bash
 # Error list and solutions:
 # 1. For RuntimeError: Failed to find function: mono.model.backbones.vit_large_reg
 # https://github.com/YvanYin/Metric3D/issues/151
@@ -83,23 +101,13 @@ pip install supervision transformers
 
 # 5. For ModuleNotFoundError: No module named 'grounding_dino'
 # Search all the grounding_dino.groundingdino in the Grounded-SAM-2 repository, and change it to groundingdino.
+
+# 6. For OSError: image file is truncated (18 bytes not processed)
+# Add the following lines to any files that load images, like generate files and transform.py
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 ```
 
-### Dataset Preparation
-
-1. Prepare the nuScenes dataset following the instructions in the [mmdetection3d docs](https://mmdetection3d.readthedocs.io/en/latest/user_guides/dataset_prepare.html#nuscenes).
-2. Update the dataset `.pkl` files with `scene_idx` to match the occupancy ground truths:
-
-    ```bash
-    python tools/create_data.py nuscenes --root-path ./data/nuscenes --out-dir ./data/nuscenes --extra-tag nuscenes
-    ```
-
-3. Download the occupancy ground truth data from [CVPR2023-3D-Occupancy-Prediction](https://github.com/CVPR2023-3D-Occupancy-Prediction/CVPR2023-3D-Occupancy-Prediction) and place it in `data/nuscenes/gts`.
-4. Generate features and rendering targets:
-
-    * Run `PYTHONPATH=. python tools/generate_depth.py` to generate metric depth estimations.
-    * **[For GaussTR-FeatUp Only]** Navigate to the [FeatUp](https://github.com/mhamilton723/FeatUp) repository and run `python tools/generate_featup.py`.
-    * **[Optional for GaussTR-FeatUp]** Navigate to the [Grounded SAM 2](https://github.com/IDEA-Research/Grounded-SAM-2) and run `python tools/generate_grounded_sam2.py` to enable auxiliary segmentation supervision.
 
 ### CLIP Text Embeddings
 

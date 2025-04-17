@@ -42,6 +42,9 @@ pip install mmcv==2.1.0
 # For CUDA 11.8
 pip install -r requirements_cuda118.txt --extra-index-url https://download.pytorch.org/whl/cu118
 
+# For CUDA 12.1
+pip install -r requirements_cuda121.txt --extra-index-url https://download.pytorch.org/whl/cu121
+
 # To install mmdet3d development version in order to generate the pkl files and gt database:
 # pip uninstall mmdet3d
 # wget https://github.com/open-mmlab/mmdetection3d/archive/refs/tags/v1.4.0.zip
@@ -66,12 +69,20 @@ from mono.model.backbones import *
 pip uninstall mmcv mmcv-full
 # Replace the cu118 and torch2.1 with your own CUDA and PyTorch version
 pip install mmcv==2.1.0 -f https://download.openmmlab.com/mmcv/dist/cu118/torch2.1/index.html
+# Replace the cu121 and torch2.3 with your own CUDA and PyTorch version
+pip install mmcv==2.1.0 -f https://download.openmmlab.com/mmcv/dist/cu121/torch2.3/index.html
 
 # 3. For FileNotFoundError: [Errno 2] No such file or directory: '/scratch/lzhao360/download/miniconda3/miniconda3/envs/gausstr/lib/python3.10/site-packages/featup/featurizers/maskclip/bpe_simple_vocab_16e6.txt.gz'
 # https://github.com/mhamilton723/FeatUp/issues/47
 cd /scratch/lzhao360/download/miniconda3/miniconda3/envs/gausstr/lib/python3.10/site-packages/featup/featurizers/maskclip/
 wget https://github.com/openai/CLIP/raw/main/clip/bpe_simple_vocab_16e6.txt.gz -O bpe_simple_vocab_16e6.txt.gz
 gzip -t bpe_simple_vocab_16e6.txt.gz # For checking if the file is valid
+
+# 4. For ModuleNotFoundError: No module named 'supervision' / 'transformers'
+pip install supervision transformers
+
+# 5. For ModuleNotFoundError: No module named 'grounding_dino'
+# Search all the grounding_dino.groundingdino in the Grounded-SAM-2 repository, and change it to groundingdino.
 ```
 
 ### Dataset Preparation

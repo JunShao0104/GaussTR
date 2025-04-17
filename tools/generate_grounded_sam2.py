@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 from sam2.build_sam import build_sam2
 from sam2.sam2_image_predictor import SAM2ImagePredictor
-from grounding_dino.groundingdino.util.inference import load_image, load_model, predict
+from groundingdino.util.inference import load_image, load_model, predict
 
 OCC3D_CATEGORIES = (
     ['barrier', 'concrete barrier', 'metal barrier', 'water barrier'],
@@ -40,16 +40,24 @@ INDEX_MAPPING = [
 ]
 
 IMG_PATH = 'data/nuscenes/samples/'
-OUTPUT_DIR = Path('nuscenes_grounded_sam2/')
+# OUTPUT_DIR = Path('nuscenes_grounded_sam2/')
+OUTPUT_DIR = Path('data/nuscenes_grounded_sam2/')
 
-SAM2_CHECKPOINT = 'checkpoints/sam2.1_hiera_base_plus.pt'
-SAM2_MODEL_CONFIG = 'configs/sam2.1/sam2.1_hiera_b+.yaml'
-GROUNDING_DINO_CONFIG = 'grounding_dino/groundingdino/config/GroundingDINO_SwinB_cfg.py'
-GROUNDING_DINO_CHECKPOINT = 'gdino_checkpoints/groundingdino_swinb_cogcoor.pth'
+# TODO: Change to your paths to the model checkpoints
+# SAM2
+SAM2_CHECKPOINT = '//scratch/lzhao360/Grounded-SAM-2/checkpoints/sam2.1_hiera_base_plus.pt'
+# SAM2_CHECKPOINT = 'checkpoints/sam2.1_hiera_base_plus.pt'
+SAM2_MODEL_CONFIG = '//scratch/lzhao360/Grounded-SAM-2/sam2/configs/sam2.1/sam2.1_hiera_b+.yaml'
+# SAM2_MODEL_CONFIG = 'configs/sam2.1/sam2.1_hiera_b+.yaml'
+# Grounding DINO
+GROUNDING_DINO_CONFIG = '//scratch/lzhao360/Grounded-SAM-2/grounding_dino/groundingdino/config/GroundingDINO_SwinB_cfg.py'
+# GROUNDING_DINO_CONFIG = 'grounding_dino/groundingdino/config/GroundingDINO_SwinB_cfg.py'
+GROUNDING_DINO_CHECKPOINT = '//scratch/lzhao360/Grounded-SAM-2/gdino_checkpoints/groundingdino_swinb_cogcoor.pth'
+# GROUNDING_DINO_CHECKPOINT = 'gdino_checkpoints/groundingdino_swinb_cogcoor.pth'
 
 BOX_THRESHOLD = 0.35
 TEXT_THRESHOLD = 0.25
-DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
+DEVICE = 'cuda:2' if torch.cuda.is_available() else 'cpu' # TODO: Change to your specified gpu!
 DUMP_JSON_RESULTS = True
 
 # create output directory
@@ -93,7 +101,8 @@ for view_dir in os.listdir(IMG_PATH):
             boxes=boxes, in_fmt="cxcywh", out_fmt="xyxy").numpy()
 
         # FIXME: figure how does this influence the G-DINO model
-        torch.autocast(device_type="cuda", dtype=torch.bfloat16).__enter__()
+        # torch.autocast(device_type="cuda", dtype=torch.bfloat16).__enter__()
+        torch.autocast(device_type="cuda", dtype=torch.float32).__enter__() # For error: RuntimeError: "ms_deform_attn_forward_cuda" not implemented for 'BFloat16'
 
         if torch.cuda.get_device_properties(0).major >= 8:
             # turn on tfloat32 for Ampere GPUs (https://pytorch.org/docs/stable/notes/cuda.html#tensorfloat-32-tf32-on-ampere-devices)

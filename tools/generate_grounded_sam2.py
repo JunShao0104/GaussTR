@@ -84,6 +84,11 @@ grounding_model = load_model(
 text = TEXT_PROMPT
 
 for view_dir in os.listdir(IMG_PATH):
+    # TODO: Filter out lidar or radar directory!
+    if 'CAM' not in view_dir:
+        continue
+    else:
+        print(f'Processing {view_dir}...')
     for image_path in tqdm(os.listdir(osp.join(IMG_PATH, view_dir))):
         image_source, image = load_image(
             os.path.join(IMG_PATH, view_dir, image_path))

@@ -1,6 +1,5 @@
 --extra-index-url https://download.pytorch.org/whl/cu121
 
-gsplat==1.4.0
 mmcv==2.1.0
 mmdet==3.3.0
 mmdet3d==1.4.0

@@ -7,7 +7,6 @@ mmpretrain
 mmsegmentation
 openmim
 ninja
-gsplat
 timm
 ftfy
 regex

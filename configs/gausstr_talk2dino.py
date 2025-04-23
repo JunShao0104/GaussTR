@@ -125,7 +125,7 @@ shared_dataset_cfg = dict(
     filter_empty_gt=False)
 
 train_dataloader = dict(
-    batch_size=2,
+    batch_size=1,
     num_workers=4,
     persistent_workers=True,
     pin_memory=True,
@@ -135,7 +135,7 @@ train_dataloader = dict(
         pipeline=train_pipeline,
         **shared_dataset_cfg))
 val_dataloader = dict(
-    batch_size=4,
+    batch_size=1,
     num_workers=4,
     persistent_workers=True,
     pin_memory=True,

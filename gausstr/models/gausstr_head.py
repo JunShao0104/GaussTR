@@ -194,12 +194,17 @@ class GaussTRHead(BaseModule):
             far_plane=100,
             render_mode='RGB+D',  # NOTE: 'ED' mode is better for visualization
             channel_chunk=32).flatten(0, 1)
+        # print("initial rendered.shape", rendered.shape) # torch.Size([12, 129, 432, 768])
         rendered_depth = rendered[:, -1]
         rendered = rendered[:, :-1]
+        # print("rendered_depth.shape", rendered_depth.shape) # torch.Size([12, 432, 768])
+        # print("after rendered.shape", rendered.shape) # torch.Size([12, 128, 432, 768])
+
 
         losses = {}
         depth = torch.where(depth < self.depth_limit, depth,
                             1e-3).flatten(0, 1)
+        # AssertionError: the shapes of pred (torch.Size([12, 432, 768])) and target (torch.Size([12, 900, 1600])) are mismatch
         losses['loss_depth'] = self.depth_loss(rendered_depth, depth)
         losses['mae_depth'] = self.depth_loss(
             rendered_depth, depth, criterion='l1')

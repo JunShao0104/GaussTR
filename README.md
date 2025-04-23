@@ -45,6 +45,13 @@ pip install -r requirements_cuda118.txt --extra-index-url https://download.pytor
 # For CUDA 12.1
 pip install -r requirements_cuda121.txt --extra-index-url https://download.pytorch.org/whl/cu121
 
+# Install gsplat for CUDA 11.8
+# https://docs.gsplat.studio/whl/gsplat/
+cd whl/
+wget https://github.com/nerfstudio-project/gsplat/releases/download/v1.4.0/gsplat-1.4.0%2Bpt21cu118-cp310-cp310-linux_x86_64.whl
+pip install gsplat-1.4.0+pt21cu118-cp310-cp310-linux_x86_64.whl
+cd ..
+
 # To install mmdet3d development version in order to generate the pkl files and gt database:
 # pip uninstall mmdet3d
 # wget https://github.com/open-mmlab/mmdetection3d/archive/refs/tags/v1.4.0.zip
@@ -57,6 +64,21 @@ pip install -r requirements_cuda121.txt --extra-index-url https://download.pytor
 # cd mmdetection3d-1.4.0
 # python tools/create_data.py nuscenes --root-path ./data/nuscenes --out-dir ./data/nuscenes --extra-tag nuscenes # train and val pkl files, db infos pkl file, gt_database
 # python tools/create_data.py nuscenes --root-path ./data/nuscenes --out-dir ./data/nuscenes --extra-tag nuscenes --only-gt-database # only gt_database
+
+# Fore reference, the author's packages version
+# Package                 Version            Editable project location
+# ----------------------- ------------------ ---------------------------------------------------
+# gsplat                  1.4.0+pt21cu118
+# mmcv                    2.1.0
+# mmdet                   3.3.0
+# mmdet3d                 1.4.0
+# mmengine                0.10.4
+# mmpretrain              1.2.0
+# mmsegmentation          1.2.2
+# numpy                   1.26.4
+# openmim                 0.3.9
+# torch                   2.1.2+cu118
+# torchvision             0.16.2+cu118
 ```
 
 ### Dataset Preparation

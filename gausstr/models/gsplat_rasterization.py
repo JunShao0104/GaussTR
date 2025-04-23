@@ -35,6 +35,8 @@ def rasterize_gaussians(means3d,
             image_size[1 - i] = round(image_size[1 - i] *
                                       img_aug_mats[0, i, i].item() +
                                       img_aug_mats[0, i, 3].item())
+    # For checking the image size
+    # print(f'Image size: {image_size}') # [432, 768]
 
     rendered_image = rasterization(
         means3d,

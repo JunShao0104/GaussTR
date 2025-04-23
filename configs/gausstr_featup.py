@@ -76,7 +76,7 @@ train_pipeline = [
         final_dim=input_size,
         resize_lim=[0.48, 0.48],
         is_train=True),
-    dict(type='LoadFeatMaps', data_root='data/nuscenes_metric3d', key='depth'),
+    dict(type='LoadFeatMaps', data_root='data/nuscenes_metric3d', key='depth', apply_aug=True), # No apply_aug=True in the original config
     dict(type='LoadFeatMaps', data_root='data/nuscenes_featup', key='feats'),
     dict(
         type='LoadFeatMaps',
@@ -122,7 +122,7 @@ shared_dataset_cfg = dict(
     filter_empty_gt=False)
 
 train_dataloader = dict(
-    batch_size=2,
+    batch_size=1,
     num_workers=4,
     persistent_workers=True,
     pin_memory=True,

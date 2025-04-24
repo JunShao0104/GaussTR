@@ -129,7 +129,7 @@ class GaussTR(BaseModel):
             else:
                 x = self.backbone(inputs)[0]
         else:
-            x = data_samples['feats'].flatten(0, 1)
+            x = data_samples['feats'].flatten(0, 1) # clip features
 
         if hasattr(self, 'projection'):
             x = self.projection(x.permute(0, 2, 3, 1))[0]
@@ -192,6 +192,7 @@ class GaussTR(BaseModel):
         return x.reshape(B, H, W, C).permute(0, 3, 1, 2)
 
     def pre_transformer(self, mlvl_feats):
+        # mlvl_feats: list of tensors, multi-layer features from fpn
         batch_size = mlvl_feats[0].size(0)
 
         mlvl_masks = []
@@ -234,6 +235,8 @@ class GaussTR(BaseModel):
             valid_ratios = mlvl_feats[0].new_ones(batch_size, len(mlvl_feats),
                                                   2)
 
+        # This part is to form multi-scale features prepared for deformable attention
+        # Similar to the file used in ours
         decoder_inputs_dict = dict(
             memory_mask=mask_flatten,
             spatial_shapes=spatial_shapes,

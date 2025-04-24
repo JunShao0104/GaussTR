@@ -74,7 +74,7 @@ train_pipeline = [
     dict(
         type='ImageAug3D',
         final_dim=input_size,
-        resize_lim=[0.48, 0.48],
+        resize_lim=[0.48, 0.48], # For control the image size to reduce the memory usage
         is_train=True),
     dict(type='LoadFeatMaps', data_root='data/nuscenes_metric3d', key='depth', apply_aug=True), # No apply_aug=True in the original config
     dict(type='LoadFeatMaps', data_root='data/nuscenes_featup', key='feats'),
@@ -85,11 +85,11 @@ train_pipeline = [
         apply_aug=True),
     dict(
         type='Pack3DDetInputs',
-        keys=['img'],
+        keys=['img'], # input data for both training and validation
         meta_keys=[
             'cam2img', 'cam2ego', 'ego2global', 'img_aug_mat', 'sample_idx',
             'num_views', 'img_path', 'depth', 'feats', 'sem_seg'
-        ])
+        ]) # auxiliary data and pseudo labels for training, posibly not used in the validation
 ]
 test_pipeline = [
     dict(

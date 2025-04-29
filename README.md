@@ -152,6 +152,12 @@ Download the pre-generated CLIP text embeddings from the [Releases](https://gith
 PYTHONPATH=. mim train mmdet3d [CONFIG] [-l pytorch -G [GPU_NUM]]
 ```
 
+```bash
+# For Talk2DINO error with torch.hub.load
+rm -rf /nethome/lzhao360/.cache/torch/hub/facebookresearch_dinov2_main
+python tools/load_dinov2.py # For checking whether the model is loaded correctly
+```
+
 ### Testing
 
 ```bash

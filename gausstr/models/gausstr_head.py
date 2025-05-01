@@ -126,7 +126,7 @@ class GaussTRHead(BaseModule):
                 sem_segs=None,
                 **kwargs):
         bs, n = cam2img.shape[:2]
-        x = x.reshape(bs, n, *x.shape[1:])
+        x = x.reshape(bs, n, *x.shape[1:]) # query
 
         deltas = self.regress_head(x)
         ref_pts = (
@@ -153,7 +153,7 @@ class GaussTRHead(BaseModule):
         rotations = rotations.unsqueeze(2).expand(-1, -1, x.size(2), -1)
 
         if mode == 'predict':
-            features = features @ self.text_proto_embeds
+            features = features @ self.text_proto_embeds # text_proto_embeds: torch.Size([512, 21]) where 512 is the latent clip feature, 21 is the number of classes
             density, grid_feats = self.voxelizer(
                 means3d=means3d.flatten(1, 2),
                 opacities=opacities.flatten(1, 2),
@@ -167,16 +167,22 @@ class GaussTRHead(BaseModule):
             probs = merge_probs(probs, OCC3D_CATEGORIES)
             preds = probs.argmax(-1)
             preds += (preds > 10) * 1 + 1  # skip two classes of "others"
-            preds = torch.where(density.squeeze(-1) > 4e-2, preds, 17)
+            # after the operation above, class 0-10 becomes 1-11, class 11-15 becomes 13-17.
+            # class 1-11: barrier, ..., road
+            # class 12 is other_flat which should be ignored
+            # class 13-17: sidewalk, ..., vegetation, sky=nothing
+            # https://github.com/nutonomy/nuscenes-devkit/blob/fcc41628d41060b3c1a86928751e5a571d2fc2fa/python-sdk/nuscenes/eval/lidarseg/README.md
+            preds = torch.where(density.squeeze(-1) > 4e-2, preds, 17) # if >, then keep it. Otherwise, we set it to be 17
             return preds
 
-        tgt_feats = feats.flatten(-2).mT
+        # feats: (..., 512, 27, 48)
+        tgt_feats = feats.flatten(-2).mT # (..., 1296, 512)
         if hasattr(self, 'projection'):
             tgt_feats = self.projection(tgt_feats)[0]
 
         u, s, v = torch.pca_lowrank(
             tgt_feats.flatten(0, 2).double(), q=self.reduce_dims, niter=4)
-        tgt_feats = tgt_feats @ v.to(tgt_feats)
+        tgt_feats = tgt_feats @ v.to(tgt_feats) # (bsn, 1296, 128) = (bs, 27 * 48, reduce_dims)
         features = features @ v.to(features)
         features = features.float()
 
@@ -209,18 +215,19 @@ class GaussTRHead(BaseModule):
         losses['mae_depth'] = self.depth_loss(
             rendered_depth, depth, criterion='l1')
 
-        # Interpolating to high resolution for supervision can improve mIoU by 0.7
+        # Interpolating to high resolution for supervision can improve mIoU by 0.7 TODO: check this!
         # compared to average pooling to low resolution.
-        bsn, c, h, w = rendered.shape
+        bsn, c, h, w = rendered.shape # torch.Size([bsn, 128, 432, 768])
+        # tgt_feats: (bsn, 1296, 128) -> (bsn, 128, 1296) -> (bsn, 128, 432//16, 768//16) == (bsn, 128, 27, 48)
         tgt_feats = tgt_feats.mT.reshape(bsn, c, h // self.patch_size,
                                          w // self.patch_size)
         tgt_feats = F.interpolate(
-            tgt_feats, scale_factor=self.patch_size, mode='bilinear')
-        rendered = rendered.flatten(2).mT
-        tgt_feats = tgt_feats.flatten(2).mT.flatten(0, 1)
+            tgt_feats, scale_factor=self.patch_size, mode='bilinear') # (bsn, 128, 27, 48) → (bsn, 128, 432, 768)
+        rendered = rendered.flatten(2).mT # (bsn, 128, 432 * 768)
+        tgt_feats = tgt_feats.flatten(2).mT.flatten(0, 1) # (bsn, 128, 432, 768) -> (bsn, 128, 432 * 768) -> (bsn, 432 * 768, 128) -> (bsn, 432 * 768 * 128)
         losses['loss_cosine'] = F.cosine_embedding_loss(
             rendered.flatten(0, 1), tgt_feats, torch.ones_like(
-                tgt_feats[:, 0])) * 5
+                tgt_feats[:, 0])) * 5 # 5 is loss weight which should be set as hyper-parameter
 
         if self.segment_head:
             losses['loss_ce'] = F.cross_entropy(

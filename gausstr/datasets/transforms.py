@@ -355,7 +355,6 @@ class BEVDataAug(BaseTransform):
 
 @TRANSFORMS.register_module()
 class LoadFeatMaps(BaseTransform):
-
     def __init__(self, data_root, key, apply_aug=False):
         self.data_root = data_root
         self.key = key

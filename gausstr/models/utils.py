@@ -202,7 +202,7 @@ def flatten_bsn_forward(func, *args, **kwargs):
 
 
 OCC3D_CATEGORIES = (
-    ['barrier'],
+    ['barrier'], # 0
     ['bicycle'],
     ['bus'],
     ['car'],
@@ -217,5 +217,5 @@ OCC3D_CATEGORIES = (
     ['terrain', 'grass'],
     ['building', 'wall', 'fence', 'pole', 'sign'],
     ['vegetation'],
-    ['sky'],
+    ['sky'], # 15, relates to nothing labeled in Occ3D
 )  # `sum(OCC3D_CATEGORIES, [])` if you need to flatten the list.

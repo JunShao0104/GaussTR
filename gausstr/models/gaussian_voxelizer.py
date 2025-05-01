@@ -21,23 +21,24 @@ def splat_into_3d(grid_coords,
                                  device=grid_coords.device)
 
     for g in range(means3d.size(0)):
-        sigma = torch.sqrt(torch.diag(covariances[g]))
+        sigma = torch.sqrt(torch.diag(covariances[g])) # std for Gaussian
+        # create a factor with value 3 which will be multiplied with std, aiming at create a bound containing 99.7% Gaussian influence.
         factor = 3 * torch.tensor([-1, 1])[:, None].to(sigma)
         bounds = means3d[g, None] + factor * sigma[None]
         if not (((bounds > vol_range[None, :3]).max(0).values.min()) and
                 ((bounds < vol_range[None, 3:]).max(0).values.min())):
             continue
-        bounds = bounds.clamp(vol_range[:3], vol_range[3:])
-        bounds = ((bounds - vol_range[:3]) / voxel_size).int().tolist()
-        slices = tuple([slice(lo, hi + 1) for lo, hi in zip(*bounds)])
+        bounds = bounds.clamp(vol_range[:3], vol_range[3:]) # only consider the influence of Gaussian within the boundary
+        bounds = ((bounds - vol_range[:3]) / voxel_size).int().tolist() # from absolute value to pixel coord
+        slices = tuple([slice(lo, hi + 1) for lo, hi in zip(*bounds)]) # create a slice for each axis
 
-        diff = grid_coords[slices] - means3d[g]
+        diff = grid_coords[slices] - means3d[g] # offset of each voxel versus the Gaussian center
         maha_dist = (diff.unsqueeze(-2) @ covariances[g].inverse()
-                     @ diff.unsqueeze(-1)).squeeze(-1)
-        density = opacities[g] * torch.exp(-0.5 * maha_dist)
-        grid_density[slices] += density
+                     @ diff.unsqueeze(-1)).squeeze(-1) # Mahalanobis distance, same as GaussianFormer
+        density = opacities[g] * torch.exp(-0.5 * maha_dist) # Gaussian density is computed with MH distance and opacity
+        grid_density[slices] += density # accumulate the density of each Gaussian
         if features is not None:
-            grid_feats[slices] += density * features[g]
+            grid_feats[slices] += density * features[g] # accumulate the feature of each Gaussian into voxel, the feature is weighted by density
 
     if features is None:
         return grid_density

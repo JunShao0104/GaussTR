@@ -147,9 +147,9 @@ class GaussTR(BaseModel):
             feats = self.forward_encoder(**encoder_inputs)
         else:
             decoder_inputs = self.pre_transformer(feats)
-            feats = flatten_multi_scale_feats(feats)[0]
-        decoder_inputs.update(self.pre_decoder(feats))
-        decoder_outputs = self.forward_decoder(
+            feats = flatten_multi_scale_feats(feats)[0] # (n, l, c) concated on dim=1
+        decoder_inputs.update(self.pre_decoder(feats)) # pre_decoder is used for adding in pre-updated queries and sampling points
+        decoder_outputs = self.forward_decoder( # decoder is used for refining the queries
             reg_branches=[h.regress_head for h in self.gauss_heads],
             **decoder_inputs)
 
@@ -281,8 +281,8 @@ class GaussTR(BaseModel):
 
     def pre_decoder(self, memory):
         bs, _, c = memory.shape
-        query = self.query_embeds.weight.unsqueeze(0).expand(bs, -1, -1)
-        reference_points = torch.rand((bs, query.size(1), 2)).to(query)
+        query = self.query_embeds.weight.unsqueeze(0).expand(bs, -1, -1) # (bs, num_queries, embed_dim)
+        reference_points = torch.rand((bs, query.size(1), 2)).to(query) # (bs, num_queries, 2) only two reference points per query is used!
 
         decoder_inputs_dict = dict(
             query=query, memory=memory, reference_points=reference_points)

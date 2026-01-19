@@ -1,0 +1,19 @@
+--index-url https://pypi.org/simple
+--extra-index-url https://download.pytorch.org/whl/cu128
+
+torch==2.7.1
+torchvision==0.22.1
+
+mmcv==2.1.0
+mmengine==0.10.4
+mmdet==3.3.0
+mmdet3d==1.4.0
+mmpretrain==1.2.0
+mmsegmentation==1.2.2
+
+numpy==1.26.4
+openmim==0.3.9
+
+timm
+ftfy
+regex
